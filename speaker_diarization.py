@@ -116,7 +116,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-# python speaker_diarization.py audio.wav --num_speakers 2
