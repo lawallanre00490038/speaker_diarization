@@ -15,6 +15,11 @@ import plotly.graph_objects as go
 import matplotlib.cm as cm
 from segment import segment_embedding
 
+
+def time(secs):
+        return datetime.timedelta(seconds=round(secs))
+
+
 # Function to process the audio and perform speaker diarization
 def speaker_diarization(audio_path, num_speakers, model_size, language='English'):
 
@@ -28,12 +33,10 @@ def speaker_diarization(audio_path, num_speakers, model_size, language='English'
     duration = librosa.get_duration(y=y, sr=sr)
     frames = len(y)  # Total samples in the audio file
     rate = sr  # Sampling rate of the audio file
-    
-    embedding_model = segment_embedding(segments, audio_path, duration)
 
     embeddings = np.zeros(shape=(len(segments), 192))
     for i, segment in enumerate(segments):
-        embeddings[i] = embedding_model(segment)
+        embeddings[i] = segment_embedding(segment, audio_path, duration)
 
     embeddings = np.nan_to_num(embeddings)
 
@@ -42,9 +45,6 @@ def speaker_diarization(audio_path, num_speakers, model_size, language='English'
     labels = clustering.labels_
     for i in range(len(segments)):
         segments[i]["speaker"] = 'SPEAKER ' + str(labels[i] + 1)
-
-    def time(secs):
-        return datetime.timedelta(seconds=round(secs))
 
     f = open("transcript.txt", "w")
     for (i, segment) in enumerate(segments):
